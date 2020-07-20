@@ -3,7 +3,6 @@
 </template>
 
 <script>
-/*eslint-disable */
 import { loadModules } from "esri-loader";
 
 export default {
