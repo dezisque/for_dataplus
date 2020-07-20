@@ -8,6 +8,7 @@ import { loadModules } from "esri-loader";
 
 export default {
   name: "web-map",
+
   data() {
     return {
       map: null,
@@ -15,6 +16,35 @@ export default {
       search: null,
     };
   },
+
+  mounted: function () {
+    loadModules(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], {
+      css: true,
+    }).then(([ArcGISMap, MapView, Search]) => {
+      // Map Init
+      this.map = new ArcGISMap({
+        basemap: "topo-vector",
+      });
+
+      this.view = new MapView({
+        container: this.$el,
+        map: this.map,
+        center: [-118, 34],
+        zoom: 8,
+      });
+
+      this.search = new Search({
+        view: this.view,
+      });
+
+      // Modules Init
+      this.view.ui.add(this.search, "top-right");
+
+      // Listeners
+      this.view.on("click", this.mapClickHandler);
+    });
+  },
+
   methods: {
     mapClickHandler(evt) {
       this.search.clear();
@@ -48,34 +78,6 @@ export default {
         location: pt,
       });
     },
-  },
-
-  mounted: function () {
-    loadModules(["esri/Map", "esri/views/MapView", "esri/widgets/Search"], {
-      css: true,
-    }).then(([ArcGISMap, MapView, Search]) => {
-      // Map Init
-      this.map = new ArcGISMap({
-        basemap: "topo-vector",
-      });
-
-      this.view = new MapView({
-        container: this.$el,
-        map: this.map,
-        center: [-118, 34],
-        zoom: 8,
-      });
-
-      this.search = new Search({
-        view: this.view,
-      });
-
-      // Modules Init
-      this.view.ui.add(this.search, "top-right");
-
-      // Listeners
-      this.view.on("click", this.mapClickHandler);
-    });
   },
 
   beforeDestroy() {
